@@ -6,275 +6,436 @@
 <title>Estos poemas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,400;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --navy-deep:#0c1526;
-    --navy:#16233f;
-    --mist:#b9c8d6;
     --ivory:#eef1e9;
-    --gold:#c9a86a;
   }
-
   *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; height:100%; background:#0c1526; }
 
-  html,body{
-    margin:0;
-    padding:0;
-    height:100%;
-    background:var(--navy-deep);
-    overflow:hidden;
-  }
-
-  .scene{
-    display:flex;
-    flex-direction:row;
-    width:100vw;
+  /* ---------- contenedor de slides: aqui vive el swipe / scroll-snap ---------- */
+  .slides{
     height:100vh;
     height:100dvh;
+    overflow-y:scroll;
+    scroll-snap-type:y mandatory;
+    scroll-behavior:smooth;
+  }
+  .slide{
+    position:relative;
+    height:100vh;
+    height:100dvh;
+    scroll-snap-align:start;
+    scroll-snap-stop:always;
+    display:flex;
+    flex-direction:row;
     overflow:hidden;
   }
 
-  /* ---------- página izquierda: el texto ---------- */
-  .page-text{
+  /* ---------- navegacion comun a todas las paginas ---------- */
+  .nav-btn{
+    position:absolute;
+    right:22px;
+    z-index:5;
+    width:38px; height:38px;
+    border-radius:50%;
+    border:1px solid rgba(238,241,233,0.35);
+    background:rgba(12,21,38,0.35);
+    backdrop-filter:blur(6px);
+    color:var(--ivory);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    font-size:16px;
+    line-height:1;
+    transition:background .3s ease, transform .3s ease;
+  }
+  .nav-btn:hover{ background:rgba(12,21,38,0.6); transform:translateY(-2px); }
+  .nav-down{ bottom:22px; }
+  .nav-up{ top:22px; }
+
+  .dots{
+    position:fixed;
+    right:8px;
+    top:50%;
+    transform:translateY(-50%);
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    z-index:6;
+  }
+  .dot{
+    width:6px; height:6px;
+    border-radius:50%;
+    background:rgba(238,241,233,0.35);
+    transition:background .4s ease, transform .4s ease;
+  }
+  .dot.active{ background:var(--ivory); transform:scale(1.4); }
+
+  /* ============================================================
+     SLIDE 1 — poema japones / azul
+     ============================================================ */
+  .slide-1{ --deep:#0c1526; --mid:#16233f; --accent:#c9a86a; --mist:#b9c8d6; }
+
+  .slide-1 .page-text{
     position:relative;
     flex:0 0 40%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:linear-gradient(160deg, var(--navy) 0%, var(--navy-deep) 100%);
+    display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(160deg, var(--mid) 0%, var(--deep) 100%);
     box-shadow: inset -22px 0 34px -26px rgba(0,0,0,0.65);
     padding:4vh 3vw;
   }
-  .page-text::after{
-    content:"";
-    position:absolute;
-    top:0; bottom:0; right:0;
-    width:1px;
+  .slide-1 .page-text::after{
+    content:""; position:absolute; top:0; bottom:0; right:0; width:1px;
     background:linear-gradient(180deg, transparent, rgba(201,168,106,0.55), transparent);
   }
+  @media (max-width:640px){ .slide-1 .page-text{ flex-basis:46%; padding:3.5vh 2.5vw; } }
 
-  @media (max-width:640px){
-    .page-text{ flex-basis:46%; padding:3.5vh 2.5vw; }
+  .slide-1 .page-image{ position:relative; flex:1 1 auto; overflow:hidden; }
+  .slide-1 .bg{
+    position:absolute; inset:-4%;
+    background-image:url('Japan_blue.jpg');
+    background-repeat:no-repeat; background-size:cover; background-position:right center;
+    animation:drift1 26s ease-in-out infinite alternate;
   }
+  @keyframes drift1{ from{ transform:scale(1) translate3d(0,0,0);} to{ transform:scale(1.07) translate3d(-1.2%,-1%,0);} }
+  .slide-1 .vignette{ position:absolute; inset:0; background:linear-gradient(90deg, rgba(8,13,24,0.45), transparent 22%); pointer-events:none; }
 
-  /* ---------- página derecha: solo la imagen ---------- */
-  .page-image{
+  .slide-1 .poem-stage{ position:relative; width:100%; height:100%; display:flex; align-items:center; justify-content:center; cursor:pointer; outline:none; -webkit-tap-highlight-color:transparent; user-select:none; }
+  .slide-1 .poem{ position:absolute; max-height:90%; max-width:96%; transition:opacity 1s ease, filter 1s ease, transform 1s ease; }
+
+  .slide-1 .poem.primary{
+    writing-mode:vertical-rl; text-orientation:mixed;
+    font-family:'Noto Serif JP', serif; font-weight:300; color:var(--ivory);
+    font-size:clamp(14px, 2.6vw, 20px); line-height:2.0; letter-spacing:0.06em;
+    max-height:88%; overflow-x:auto; overflow-y:hidden; padding:0 .3em;
+    scrollbar-width:none; -webkit-overflow-scrolling:touch;
+    text-shadow:0 0 14px rgba(0,0,0,.5);
+    opacity:1; filter:blur(0); transform:scale(1);
+  }
+  .slide-1 .poem.primary::-webkit-scrollbar{ display:none; }
+  .slide-1 .poem.primary p{ margin:0 .5em; display:inline-block; }
+
+  .slide-1 .poem.secondary{
+    font-family:'Cormorant Garamond', serif; font-style:italic; font-weight:400; color:var(--ivory);
+    font-size:clamp(13px, 2.1vw, 19px); line-height:1.55; text-align:center;
+    max-width:92%; overflow-y:auto; max-height:88%; padding:0 .4em; scrollbar-width:none;
+    text-shadow:0 0 14px rgba(0,0,0,.5);
+    opacity:0; filter:blur(8px); transform:scale(1.04); pointer-events:none;
+  }
+  .slide-1 .poem.secondary::-webkit-scrollbar{ display:none; }
+  .slide-1 .poem.secondary p{ margin:0 0 .5em; }
+  .slide-1 .poem.secondary p:last-child{ margin-bottom:0; color:var(--accent); }
+
+  .slide-1 .poem-stage.revealed .poem.primary{ opacity:0; filter:blur(8px); transform:scale(.94); }
+  .slide-1 .poem-stage.revealed .poem.secondary{ opacity:1; filter:blur(0); transform:scale(1); pointer-events:auto; }
+
+  .slide-1 .hint{ position:absolute; left:0; right:0; bottom:2.5vh; text-align:center; font-family:'Cormorant Garamond', serif; font-style:italic; color:var(--mist); font-size:13px; opacity:.75; transition:opacity 1.2s ease; pointer-events:none; }
+  .slide-1 .hint.hidden{ opacity:0; }
+
+  /* ============================================================
+     SLIDE 2 — poema Kanye / morado
+     ============================================================ */
+  .slide-2{ --deep:#1c1430; --mid:#3a2461; --accent:#ff8a5c; --mist:#cbb8e8; }
+
+  .slide-2 .page-text{
     position:relative;
-    flex:1 1 auto;
-    overflow:hidden;
+    flex:0 0 40%;
+    display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(160deg, var(--mid) 0%, var(--deep) 100%);
+    box-shadow: inset -22px 0 34px -26px rgba(0,0,0,0.65);
+    padding:4vh 3vw;
   }
-  .page-image .bg{
-    position:absolute;
-    inset:-4%;
-    background-image:url('Japan blue.jpg');
-    background-repeat:no-repeat;
-    background-size:cover;
-    background-position:right center;
-    animation:drift 26s ease-in-out infinite alternate;
-    will-change:transform;
+  .slide-2 .page-text::after{
+    content:""; position:absolute; top:0; bottom:0; right:0; width:1px;
+    background:linear-gradient(180deg, transparent, rgba(255,138,92,0.5), transparent);
   }
-  @keyframes drift{
-    from{ transform:scale(1) translate3d(0,0,0); }
-    to{ transform:scale(1.07) translate3d(-1.2%,-1%,0); }
-  }
-  .page-image .vignette{
-    position:absolute;
-    inset:0;
-    background:linear-gradient(90deg, rgba(8,13,24,0.45), transparent 22%);
-    pointer-events:none;
-  }
+  @media (max-width:640px){ .slide-2 .page-text{ flex-basis:46%; padding:3.5vh 2.5vw; } }
 
-  /* ---------- el poema, dentro de la página de texto ---------- */
-  .poem-stage{
+  .slide-2 .page-image{ position:relative; flex:1 1 auto; overflow:hidden; }
+  .slide-2 .bg{
+    position:absolute; inset:0;
+    background-image:url('Graduation_Kanye_West.jpg');
+    background-repeat:no-repeat; background-size:cover; background-position:center top;
+    /* sin animacion de zoom, tal como se pidio */
+  }
+  .slide-2 .vignette{ position:absolute; inset:0; background:linear-gradient(90deg, rgba(20,14,32,0.45), transparent 22%); pointer-events:none; }
+
+  /* --- disco de vinilo --- */
+  .vinyl-btn{
+    position:absolute; top:20px; right:20px; z-index:5;
+    width:56px; height:56px; border-radius:50%;
+    cursor:pointer; outline:none; -webkit-tap-highlight-color:transparent;
+    filter:drop-shadow(0 4px 10px rgba(0,0,0,.5));
+  }
+  .vinyl-disc{
+    width:100%; height:100%; border-radius:50%;
+    background:
+      radial-gradient(circle at center, var(--accent) 0 8%, #111 9% 11%, #1c1c1c 12% 100%),
+      repeating-radial-gradient(circle at center, rgba(255,255,255,.06) 0 2px, transparent 2px 5px);
     position:relative;
-    width:100%;
-    height:100%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    outline:none;
-    -webkit-tap-highlight-color:transparent;
-    user-select:none;
+    animation:spin 2.6s linear infinite;
+    animation-play-state:paused;
   }
+  .vinyl-disc::after{
+    content:""; position:absolute; inset:44%; border-radius:50%; background:#0c0c0c;
+  }
+  .vinyl-btn.playing .vinyl-disc{ animation-play-state:running; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .vinyl-hint{
+    position:absolute; top:82px; right:16px; z-index:5;
+    font-family:'Cormorant Garamond', serif; font-style:italic; color:var(--mist);
+    font-size:12px; opacity:.8; pointer-events:none; text-align:right; max-width:110px;
+    transition:opacity .6s ease;
+  }
+  .vinyl-hint.hidden{ opacity:0; }
 
-  .poem{
+  .slide-2 .poem-stage{ position:relative; width:100%; height:100%; display:flex; align-items:center; justify-content:center; cursor:pointer; outline:none; -webkit-tap-highlight-color:transparent; user-select:none; }
+  .slide-2 .poem{ position:absolute; max-height:90%; max-width:96%; transition:opacity 1s ease, filter 1s ease, transform 1s ease; }
+
+  /* --- pentagrama con notas (estado primario) --- */
+  .slide-2 .poem.primary{ opacity:1; filter:blur(0); transform:scale(1); }
+  .staff{ width:min(78vw, 320px); }
+  .staff-lines{ position:relative; height:90px; }
+  .staff-line{ position:absolute; left:0; right:0; height:1px; background:rgba(238,241,233,.35); }
+  .staff-line:nth-child(1){ top:0; }
+  .staff-line:nth-child(2){ top:22px; }
+  .staff-line:nth-child(3){ top:44px; }
+  .staff-line:nth-child(4){ top:66px; }
+  .staff-line:nth-child(5){ top:88px; }
+  .note{
     position:absolute;
-    max-height:90%;
-    max-width:96%;
-    transition:opacity 1s ease, filter 1s ease, transform 1s ease;
-  }
-
-  /* --- Japonés, vertical --- */
-  .poem-ja{
-    writing-mode:vertical-rl;
-    text-orientation:mixed;
-    font-family:'Noto Serif JP', serif;
-    font-weight:300;
+    font-size:26px;
     color:var(--ivory);
-    font-size:clamp(14px, 2.6vw, 20px);
-    line-height:2.0;
-    letter-spacing:0.06em;
-    max-height:88%;
-    overflow-x:auto;
-    overflow-y:hidden;
-    padding:0 0.3em;
-    scrollbar-width:none;
-    -webkit-overflow-scrolling:touch;
-    text-shadow:0 0 14px rgba(0,0,0,0.5);
-    opacity:1;
-    filter:blur(0);
-    transform:scale(1);
+    text-shadow:0 0 10px rgba(0,0,0,.5);
+    animation:float 3.4s ease-in-out infinite;
   }
-  .poem-ja::-webkit-scrollbar{ display:none; }
-  .poem-ja p{ margin:0 0.5em; display:inline-block; }
+  .note.n1{ left:4%;  top:40px; animation-delay:0s; }
+  .note.n2{ left:17%; top:10px; animation-delay:.3s; }
+  .note.n3{ left:30%; top:55px; animation-delay:.6s; }
+  .note.n4{ left:44%; top:25px; animation-delay:.9s; }
+  .note.n5{ left:58%; top:65px; animation-delay:1.2s; }
+  .note.n6{ left:72%; top:15px; animation-delay:1.5s; }
+  .note.n7{ left:86%; top:48px; animation-delay:1.8s; }
+  @keyframes float{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-6px); } }
+  .staff-caption{ margin-top:22px; text-align:center; font-family:'Cormorant Garamond', serif; font-style:italic; color:var(--mist); font-size:13px; }
 
-  /* --- Español, horizontal --- */
-  .poem-es{
-    font-family:'Cormorant Garamond', serif;
-    font-style:italic;
-    font-weight:400;
-    color:var(--ivory);
-    font-size:clamp(13px, 2.1vw, 19px);
-    line-height:1.55;
-    text-align:center;
-    max-width:92%;
-    overflow-y:auto;
-    max-height:88%;
-    padding:0 0.4em;
-    scrollbar-width:none;
-    text-shadow:0 0 14px rgba(0,0,0,0.5);
-    opacity:0;
-    filter:blur(8px);
-    transform:scale(1.04);
-    pointer-events:none;
+  .slide-2 .poem.secondary{
+    font-family:'Cormorant Garamond', serif; font-weight:400; color:var(--ivory);
+    font-size:clamp(13px, 2.1vw, 19px); line-height:1.6; text-align:center;
+    max-width:92%; overflow-y:auto; max-height:88%; padding:0 .4em; scrollbar-width:none;
+    text-shadow:0 0 14px rgba(0,0,0,.5);
+    opacity:0; filter:blur(8px); transform:scale(1.04); pointer-events:none;
   }
-  .poem-es::-webkit-scrollbar{ display:none; }
-  .poem-es p{ margin:0 0 0.5em; }
-  .poem-es p:last-child{ margin-bottom:0; color:var(--gold); }
-
-  .poem-stage.revealed .poem-ja{
-    opacity:0;
-    filter:blur(8px);
-    transform:scale(0.94);
-  }
-  .poem-stage.revealed .poem-es{
-    opacity:1;
-    filter:blur(0);
-    transform:scale(1);
-    pointer-events:auto;
+  .slide-2 .poem.secondary::-webkit-scrollbar{ display:none; }
+  .slide-2 .poem.secondary p{ margin:0 0 .5em; }
+  .slide-2 .poem.secondary p.en-line{
+    font-style:italic; font-weight:300; letter-spacing:.02em; color:var(--accent); margin-top:.9em;
   }
 
-  .hint{
-    position:absolute;
-    left:0; right:0;
-    bottom:2.5vh;
-    text-align:center;
-    font-family:'Cormorant Garamond', serif;
-    font-style:italic;
-    color:var(--mist);
-    font-size:13px;
-    letter-spacing:0.02em;
-    opacity:0.75;
-    transition:opacity 1.2s ease;
-    pointer-events:none;
-  }
-  .hint.hidden{ opacity:0; }
+  .slide-2 .poem-stage.revealed .poem.primary{ opacity:0; filter:blur(8px); transform:scale(.94); }
+  .slide-2 .poem-stage.revealed .poem.secondary{ opacity:1; filter:blur(0); transform:scale(1); pointer-events:auto; }
 
-  .poem-stage:focus-visible{
-    box-shadow:inset 0 0 0 1px rgba(201,168,106,0.5);
-  }
+  .slide-2 .hint{ position:absolute; left:0; right:0; bottom:2.5vh; text-align:center; font-family:'Cormorant Garamond', serif; font-style:italic; color:var(--mist); font-size:13px; opacity:.75; transition:opacity 1.2s ease; pointer-events:none; }
+  .slide-2 .hint.hidden{ opacity:0; }
 
   @media (prefers-reduced-motion: reduce){
-    .page-image .bg{ animation:none; }
+    .slide-1 .bg{ animation:none; }
+    .note{ animation:none; }
+    .vinyl-disc{ animation:none !important; }
     .poem{ transition:opacity .3s linear; }
   }
 </style>
 </head>
 <body>
 
-<div class="scene">
+<div class="dots" id="dots"></div>
 
-  <div class="page-text">
-    <div class="poem-stage" id="poemStage" tabindex="0" role="button" aria-label="Mantén el cursor encima o toca para traducir el poema">
-      <div class="poem poem-ja" lang="ja">
-        <p>この詩は、シンプルで穏やかなものから始まる</p>
-        <p>まるで、僕たちが初めて出会ったあの瞬間のように</p>
-        <p>でもやがて、その中に複雑さが生まれ</p>
-        <p>奇妙にさえ思えるだろう</p>
-        <p>曖昧で、読みづらくなり</p>
-        <p>それでいて胸を高鳴らせ、喜びを運ぶ</p>
-        <p>ヒーローの勝利を見た子どものように嬉しく</p>
-        <p>どこにも属せない気持ちのように悲しく</p>
-        <p>譲れない二つの誇りの間の沈黙のように気まずい</p>
-        <p>けれど最後には気づくだろう、その奥深くに</p>
-        <p>一つ一つの詩句に、韻に、夕焼けへの言葉の中に</p>
-        <p>僕たちの関係を震わせるものがあり</p>
-        <p>嵐の後の海を静め</p>
-        <p>穏やかな夕焼けを見せてくれるものがある</p>
-        <p>それは愛だ、そうあるべきものだ</p>
-        <p>僕たちの魂の願い</p>
-        <p>エゴに目がくらんでも、また静けさへと連れ戻してくれる</p>
-        <p>それは愛、ああ僕の愛しい人</p>
-      </div>
+<div class="slides" id="slides">
 
-      <div class="poem poem-es" lang="es">
-        <p>Estos poemas inician como algo simple y relajado,</p>
-        <p>así como el primer momento en que nos encontramos,</p>
-        <p>pero luego verás que en ellos nacerán complejidades</p>
-        <p>y hasta te parecerán raros,</p>
-        <p>serán difusos, difíciles de leer,</p>
-        <p>tan emocionantes que transmiten placer,</p>
-        <p>alegres como un niño que vio a su superhéroe vencer,</p>
-        <p>tristes como el sentimiento de no pertenecer,</p>
-        <p>incómodos como el silencio entre dos orgullos que no quieren ceder,</p>
-        <p>pero al final de todo verás que en lo profundo de su ser,</p>
-        <p>de cada verso, de cada rima y de cada mención al atardecer,</p>
-        <p>hay lo que nuestra relación estremece</p>
-        <p>y calma las aguas después de la tormenta</p>
-        <p>para ver el pacífico atardecer,</p>
-        <p>es amor, es lo que ha de ser,</p>
-        <p>un anhelo de nuestras almas</p>
-        <p>que incluso cegados por el ego nos vuelve a la calma,</p>
-        <p>es amor, oh mi amor.</p>
+  <!-- ============ SLIDE 1 ============ -->
+  <section class="slide slide-1" id="slide-1">
+    <div class="page-text">
+      <div class="poem-stage" id="poemStage-1" tabindex="0" role="button" aria-label="Mantén el cursor encima o toca para traducir el poema">
+        <div class="poem primary" lang="ja">
+          <p>この詩は、シンプルで穏やかなものから始まる</p>
+          <p>まるで、僕たちが初めて出会ったあの瞬間のように</p>
+          <p>でもやがて、その中に複雑さが生まれ</p>
+          <p>奇妙にさえ思えるだろう</p>
+          <p>曖昧で、読みづらくなり</p>
+          <p>それでいて胸を高鳴らせ、喜びを運ぶ</p>
+          <p>ヒーローの勝利を見た子どものように嬉しく</p>
+          <p>どこにも属せない気持ちのように悲しく</p>
+          <p>譲れない二つの誇りの間の沈黙のように気まずい</p>
+          <p>けれど最後には気づくだろう、その奥深くに</p>
+          <p>一つ一つの詩句に、韻に、夕焼けへの言葉の中に</p>
+          <p>僕たちの関係を震わせるものがあり</p>
+          <p>嵐の後の海を静め</p>
+          <p>穏やかな夕焼けを見せてくれるものがある</p>
+          <p>それは愛だ、そうあるべきものだ</p>
+          <p>僕たちの魂の願い</p>
+          <p>エゴに目がくらんでも、また静けさへと連れ戻してくれる</p>
+          <p>それは愛、ああ僕の愛しい人</p>
+        </div>
+        <div class="poem secondary" lang="es">
+          <p>Estos poemas inician como algo simple y relajado,</p>
+          <p>así como el primer momento en que nos encontramos,</p>
+          <p>pero luego verás que en ellos nacerán complejidades</p>
+          <p>y hasta te parecerán raros,</p>
+          <p>serán difusos, difíciles de leer,</p>
+          <p>tan emocionantes que transmiten placer,</p>
+          <p>alegres como un niño que vio a su superhéroe vencer,</p>
+          <p>tristes como el sentimiento de no pertenecer,</p>
+          <p>incómodos como el silencio entre dos orgullos que no quieren ceder,</p>
+          <p>pero al final de todo verás que en lo profundo de su ser,</p>
+          <p>de cada verso, de cada rima y de cada mención al atardecer,</p>
+          <p>hay lo que nuestra relación estremece</p>
+          <p>y calma las aguas después de la tormenta</p>
+          <p>para ver el pacífico atardecer,</p>
+          <p>es amor, es lo que ha de ser,</p>
+          <p>un anhelo de nuestras almas</p>
+          <p>que incluso cegados por el ego nos vuelve a la calma,</p>
+          <p>es amor, oh mi amor.</p>
+        </div>
       </div>
+      <p class="hint" id="hint-1">toca aquí para traducir</p>
     </div>
 
-    <p class="hint" id="hint">toca aquí para traducir</p>
-  </div>
+    <div class="page-image">
+      <div class="bg"></div>
+      <div class="vignette"></div>
+    </div>
 
-  <div class="page-image">
-    <div class="bg"></div>
-    <div class="vignette"></div>
-  </div>
+    <button class="nav-btn nav-down" data-target="slide-2" aria-label="Siguiente poema">↓</button>
+  </section>
+
+  <!-- ============ SLIDE 2 ============ -->
+  <section class="slide slide-2" id="slide-2">
+    <div class="page-text">
+      <div class="poem-stage" id="poemStage-2" tabindex="0" role="button" aria-label="Toca las notas para ver el poema">
+        <div class="poem primary">
+          <div class="staff">
+            <div class="staff-lines">
+              <div class="staff-line"></div>
+              <div class="staff-line"></div>
+              <div class="staff-line"></div>
+              <div class="staff-line"></div>
+              <div class="staff-line"></div>
+              <span class="note n1">♩</span>
+              <span class="note n2">♪</span>
+              <span class="note n3">♫</span>
+              <span class="note n4">♩</span>
+              <span class="note n5">♪</span>
+              <span class="note n6">♬</span>
+              <span class="note n7">♩</span>
+            </div>
+            <p class="staff-caption">Homecoming — piano</p>
+          </div>
+        </div>
+        <div class="poem secondary">
+          <p>Pienso en ti ahora y pensaré en ti después,</p>
+          <p>no desaparecerás de este corazón tenaz,</p>
+          <p>en el futuro todo puede pasar,</p>
+          <p>todo excepto el recuerdo de tu manera de caminar,</p>
+          <p>los ojos cafés que me quitan el sueño,</p>
+          <p>esa melodía que es tu voz,</p>
+          <p>cómo se ilumina tu rostro con el sol.</p>
+          <p>Te pienso como mi hogar,</p>
+          <p>mi lugar seguro al cual siempre deseo regresar,</p>
+          <p>en los peores momentos me miraste y me dijiste que me ponga de pie,</p>
+          <p>ahuyentaste dudas que deseaban nacer,</p>
+          <p>es así como siempre pienso en volver contigo</p>
+          <p class="en-line">and always think that we maybe we can start again</p>
+        </div>
+      </div>
+      <p class="hint" id="hint-2">toca las notas para leer</p>
+    </div>
+
+    <div class="page-image">
+      <div class="bg"></div>
+      <div class="vignette"></div>
+
+      <div class="vinyl-btn" id="vinyl-2" role="button" tabindex="0" aria-label="Reproducir o pausar la música">
+        <div class="vinyl-disc"></div>
+      </div>
+      <p class="vinyl-hint" id="vinylHint-2">toca el disco para escuchar</p>
+      <audio id="audio-2" src="homecoming.mp3" preload="none"></audio>
+    </div>
+
+    <button class="nav-btn nav-up" data-target="slide-1" aria-label="Poema anterior">↑</button>
+  </section>
 
 </div>
 
 <script>
-  const stage = document.getElementById('poemStage');
-  const hint = document.getElementById('hint');
-  const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  // --- swipe / botones entre slides ---
+  const container = document.getElementById('slides');
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const dotsWrap = document.getElementById('dots');
 
-  function dismissHint(){ hint.classList.add('hidden'); }
+  slides.forEach((s, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i === 0 ? ' active' : '');
+    dotsWrap.appendChild(dot);
+  });
+  const dots = Array.from(dotsWrap.children);
 
-  if (canHover){
-    stage.addEventListener('mouseenter', () => { stage.classList.add('revealed'); dismissHint(); });
-    stage.addEventListener('mouseleave', () => stage.classList.remove('revealed'));
-  }
-
-  stage.addEventListener('click', () => {
-    stage.classList.toggle('revealed');
-    dismissHint();
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.getElementById(btn.dataset.target).scrollIntoView({ behavior:'smooth' });
+    });
   });
 
-  stage.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' '){
-      e.preventDefault();
-      stage.classList.toggle('revealed');
-      dismissHint();
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting){
+        const idx = slides.indexOf(entry.target);
+        dots.forEach(d => d.classList.remove('active'));
+        dots[idx].classList.add('active');
+      }
+    });
+  }, { root: container, threshold: 0.6 });
+  slides.forEach(s => observer.observe(s));
+
+  // --- helper genérico: toggle de poema (kanji<->es, notas<->poema) ---
+  function attachPoemToggle(stageId, hintId){
+    const stage = document.getElementById(stageId);
+    const hint = document.getElementById(hintId);
+    const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const dismiss = () => hint && hint.classList.add('hidden');
+
+    if (canHover){
+      stage.addEventListener('mouseenter', () => { stage.classList.add('revealed'); dismiss(); });
+      stage.addEventListener('mouseleave', () => stage.classList.remove('revealed'));
     }
+    stage.addEventListener('click', () => { stage.classList.toggle('revealed'); dismiss(); });
+    stage.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); stage.classList.toggle('revealed'); dismiss(); }
+    });
+  }
+  attachPoemToggle('poemStage-1', 'hint-1');
+  attachPoemToggle('poemStage-2', 'hint-2');
+
+  // --- disco de vinilo: play / pause ---
+  const vinylBtn = document.getElementById('vinyl-2');
+  const audio = document.getElementById('audio-2');
+  const vinylHint = document.getElementById('vinylHint-2');
+
+  function toggleVinyl(){
+    if (audio.paused){
+      audio.play().catch(() => {});
+      vinylBtn.classList.add('playing');
+    } else {
+      audio.pause();
+      vinylBtn.classList.remove('playing');
+    }
+    vinylHint && vinylHint.classList.add('hidden');
+  }
+  vinylBtn.addEventListener('click', toggleVinyl);
+  vinylBtn.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggleVinyl(); }
   });
+  audio.addEventListener('ended', () => vinylBtn.classList.remove('playing'));
 </script>
 
 </body>
